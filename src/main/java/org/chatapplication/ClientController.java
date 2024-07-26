@@ -12,7 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.io.IOException;
 
@@ -52,19 +51,22 @@ public class ClientController {
     public void setInputFieldOnEnterPressed(KeyEvent keyEvent) throws IOException {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             // send message....
-//            JSONObject jsonObject = new JSONObject();
-//            jsonObject.put("content", inputField.getText());
-//            jsonObject.put("sender", client.getName());
-//            jsonObject.put("receiver", friendName);
-//
-//            client.sendMessage(jsonObject.toJSONString());
-            client.sendMessage(client.getName() + ": " + inputField.getText());
-            if (inputField.getText().equals("exit")) {
-                stage.close();
-            }
-            inputField.setText("");
+            setOnClickedSendButton();
         }
     }
+
+    @FXML
+    public void setOnClickedSendButton() throws IOException {
+        // send message....
+        client.sendMessage(client.getName() + ": " + inputField.getText());
+        if (inputField.getText().equals("exit")) {
+            client.socket.close();
+            stage.close();
+        }
+        inputField.setText("");
+        inputField.requestFocus();
+    }
+
 
     // Update the list of online users
     public void updateOnlineUsers(String message) {

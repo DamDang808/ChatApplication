@@ -67,11 +67,11 @@ public class Server extends Application {
             while (true) {
                 try {
                     Thread.sleep(1000);
-                    StringBuilder online = new StringBuilder("online: ");
+                    StringBuilder onlineUsers = new StringBuilder("online: ");
                     for (TaskClientConnection clientConnection : this.connectionList) {
-                        online.append(clientConnection.nameOfClient).append(", ");
+                        onlineUsers.append(clientConnection.nameOfClient).append(", ");
                     }
-                    broadcast(online.toString());
+                    broadcast(onlineUsers.toString());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -87,24 +87,7 @@ public class Server extends Application {
     //send message to all connected clients
     public void broadcast(String message) {
         for (TaskClientConnection clientConnection : this.connectionList) {
-//            if (message.startsWith("online")) {
             clientConnection.sendMessage(message);
-//            } else {
-//                JSONParser parser = new JSONParser();
-//                JSONObject mess = null;
-//                try {
-//                    mess = (JSONObject) parser.parse(message);
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
-//                String sender = (String) mess.get("sender");
-//                String receiver = mess.get("receiver") + " ";
-//                String content = (String) mess.get("content");
-//
-//                if (clientConnection.nameOfClient.equals(receiver.replace("\\s", "")) || clientConnection.nameOfClient.equals(sender))
-//                    clientConnection.sendMessage(sender + ": " + content);
-
-//        }
         }
     }
 }

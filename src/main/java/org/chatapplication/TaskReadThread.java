@@ -21,9 +21,6 @@ public class TaskReadThread implements Runnable {
     public void run() {
         while (true) {
             try {
-                if (socket.isClosed()) {
-                    break;
-                }
                 // Create data input stream
                 input = new DataInputStream(socket.getInputStream());
 

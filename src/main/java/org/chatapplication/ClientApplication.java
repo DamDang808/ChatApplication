@@ -29,19 +29,10 @@ public class ClientApplication extends Application {
         controller.setNameLabel(client.getName());
         controller.setStage(stage);
 
-        stage.setOnHiding(event -> {
-            try {
-                client.socket.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        stage.setOnHiding(e -> System.exit(0));
+
         stage.setTitle("Chat Application");
         stage.setScene(scene);
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 }

@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Date;
 
 
 public class TaskClientConnection implements Runnable {
@@ -36,10 +37,10 @@ public class TaskClientConnection implements Runnable {
 
                 //send message via server broadcast
                 server.broadcast(message);
-                System.out.println(message + " " + nameOfClient + ": exit");
 
                 if (message.equals(nameOfClient + ": exit")) {
                     server.broadcast(name + " has left the chat");
+                    server.txtAreaDisplay.appendText(name + " offline at " + new Date() + "\n");
                     server.connectionList.remove(this);
                     socket.close();
                     break;
