@@ -39,6 +39,7 @@ public class ClientLogin extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(ClientApplication.class.getResource("client-login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 300, 275);
 
+        primaryStage.setOnHiding(event -> System.exit(0));
         primaryStage.setScene(scene);
         primaryStage.setTitle("Chat Login");
         primaryStage.show();
@@ -73,8 +74,8 @@ public class ClientLogin extends Application {
             passwordField.setText("");
             Platform.runLater(() -> {
                 try {
-                    new ClientApplication(username).start(new Stage());
-                } catch (IOException e) {
+                    new ClientApplication(resultSet.getInt(1), username).start(new Stage());
+                } catch (IOException | SQLException e) {
                     throw new RuntimeException(e);
                 }
             });

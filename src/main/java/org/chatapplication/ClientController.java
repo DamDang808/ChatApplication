@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ClientController {
-    private Stage stage;
 
     @FXML
     public Label nameLabel = new Label();
@@ -46,6 +45,8 @@ public class ClientController {
 
     private String friendName;
 
+    private Stage stage;
+
     // Send message when the send button is clicked
     @FXML
     public void setInputFieldOnEnterPressed(KeyEvent keyEvent) throws IOException {
@@ -58,10 +59,10 @@ public class ClientController {
     @FXML
     public void setOnClickedSendButton() throws IOException {
         // send message....
-        client.sendMessage(client.getName() + ": " + inputField.getText());
+        client.sendMessage(client.getName() + ": " + inputField.getText() + "\n");
         if (inputField.getText().equals("exit")) {
-            client.socket.close();
             stage.close();
+            client.socket.close();
         }
         inputField.setText("");
         inputField.requestFocus();

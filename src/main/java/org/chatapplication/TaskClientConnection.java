@@ -38,7 +38,7 @@ public class TaskClientConnection implements Runnable {
                 //send message via server broadcast
                 server.broadcast(message);
 
-                if (message.equals(nameOfClient + ": exit")) {
+                if (message.equals(nameOfClient + ": exit\n")) {
                     server.broadcast(name + " has left the chat");
                     server.txtAreaDisplay.appendText(name + " offline at " + new Date() + "\n");
                     server.connectionList.remove(this);
