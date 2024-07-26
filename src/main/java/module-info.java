@@ -1,11 +1,12 @@
-module org.example.chatapplication {
+module org.chatapplication {
     requires javafx.controls;
     requires javafx.fxml;
-    requires junit;
+    requires java.sql;
+    requires com.zaxxer.hikari;
+    requires org.slf4j;
+    requires mysql.connector.j;
+    requires json.simple;
 
-
-    opens org.example.chatapplication to javafx.fxml;
-    exports org.example.chatapplication;
-    exports test;
-    opens test to javafx.fxml;
+    opens org.chatapplication to javafx.fxml;
+    exports org.chatapplication;
 }
