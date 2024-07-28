@@ -1,8 +1,10 @@
 package org.chatapplication;
 
+
 import java.io.*;
 import java.net.*;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Vector;
 
 import javafx.application.Application;
@@ -73,7 +75,8 @@ public class Server extends Application {
                     for (TaskClientConnection clientConnection : this.connectionList) {
                         onlineUsers.append(clientConnection.nameOfClient).append(", ");
                     }
-                    broadcast(onlineUsers.toString());
+                    System.out.println(onlineUsers);
+                    broadcastOnlineUser(onlineUsers.toString());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -88,7 +91,19 @@ public class Server extends Application {
 
     //send message to all connected clients
     public void broadcast(String message) {
-        for (TaskClientConnection clientConnection : this.connectionList) {
+        String content = message.split("\n")[0];
+        String sender = message.split("\n")[1];
+        String recipient = message.split("\n")[2];
+        for (TaskClientConnection clientConnection : connectionList) {
+            if (recipient.equals(" ") || recipient.equals(clientConnection.nameOfClient) || sender.equals(clientConnection.nameOfClient)) {
+                clientConnection.sendMessage(content);
+            }
+        }
+
+    }
+
+    public void broadcastOnlineUser(String message) {
+        for (TaskClientConnection clientConnection : connectionList) {
             clientConnection.sendMessage(message);
         }
     }

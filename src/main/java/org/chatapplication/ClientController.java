@@ -14,6 +14,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.nio.channels.AsynchronousChannel;
 
 public class ClientController {
 
@@ -43,9 +44,11 @@ public class ClientController {
 
     private Client client;
 
-    private String friendName;
-
     private Stage stage;
+
+    private String recipient = " ";
+
+
 
     // Send message when the send button is clicked
     @FXML
@@ -59,7 +62,21 @@ public class ClientController {
     @FXML
     public void setOnClickedSendButton() throws IOException {
         // send message....
-        client.sendMessage(client.getName() + ": " + inputField.getText() + "\n");
+        StringBuilder message = new StringBuilder();
+
+        if (inputField.getText().startsWith("/p")) {
+            recipient = inputField.getText().split(" ")[1];
+            inputField.setText("");
+            return;
+        }
+        if (inputField.getText().startsWith("/all")) {
+            recipient = "";
+            inputField.setText("");
+            return;
+        }
+
+        message.append(nameLabel.getText()).append(": ").append(inputField.getText()).append("\n").append(client.getName()).append("\n").append(recipient);
+        client.sendMessage(message.toString());
         if (inputField.getText().equals("exit")) {
             stage.close();
             client.socket.close();
@@ -71,27 +88,21 @@ public class ClientController {
 
     // Update the list of online users
     public void updateOnlineUsers(String message) {
-        String[] users = message.substring(7).split(",");
-        Platform.runLater(() -> onlineUsers.getItems().clear());
-        for (String user : users) {
-            Platform.runLater(() -> onlineUsers.getItems().add(user));
+        String content = message.substring(8);
+        System.out.println(content);
+        if (content.equals("No online users")) {
+            onlineUsers.getItems().clear();
+            return;
         }
+        String[] users = content.split(", ");
+        Platform.runLater(() -> {
+            onlineUsers.getItems().clear();
+            for (String user : users) {
+                onlineUsers.getItems().add(user);
+            }
+        });
     }
 
-    // Choose a user to chat with
-    @FXML
-    public void setOnClickedListOfOnlineUser() {
-//        Platform.runLater(() -> {
-//            String selectedUser = onlineUsers.getSelectionModel().getSelectedItem();
-//            if (selectedUser != null) {
-//                friendName = selectedUser;
-//                nameLabel.setText(selectedUser);
-//                onlineCircle.setOpacity(1);
-//                chatArea.clear();
-//                chatArea.appendText("You are now chatting with: " + selectedUser + "\n");
-//            }
-//        });
-    }
 
     public void setClient(Client client) {
         this.client = client;
@@ -103,5 +114,9 @@ public class ClientController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public String getRecipient() {
+        return recipient;
     }
 }

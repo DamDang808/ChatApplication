@@ -12,6 +12,7 @@ public class TaskClientConnection implements Runnable {
     Socket socket;
     Server server;
     String nameOfClient;
+    String idOfClient;
     // Create data input and output streams
     DataInputStream input;
     DataOutputStream output;
@@ -28,8 +29,10 @@ public class TaskClientConnection implements Runnable {
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
 
-            String name = input.readUTF();
-            nameOfClient = name;
+            String nameAndId = input.readUTF();
+
+            nameOfClient = nameAndId.split(" ")[0];
+            idOfClient = nameAndId.split(" ")[1];
 
             while (true) {
                 // Get message from the client
@@ -39,8 +42,8 @@ public class TaskClientConnection implements Runnable {
                 server.broadcast(message);
 
                 if (message.equals(nameOfClient + ": exit\n")) {
-                    server.broadcast(name + " has left the chat");
-                    server.txtAreaDisplay.appendText(name + " offline at " + new Date() + "\n");
+                    server.broadcast(nameOfClient + " has left the chat");
+                    server.txtAreaDisplay.appendText(nameOfClient + " offline at " + new Date() + "\n");
                     server.connectionList.remove(this);
                     socket.close();
                     break;

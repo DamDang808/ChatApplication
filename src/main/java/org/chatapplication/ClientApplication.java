@@ -11,7 +11,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 
 public class ClientApplication extends Application {
     private Client client;
@@ -46,13 +45,15 @@ public class ClientApplication extends Application {
     public void getAllPastMessages(ClientController controller) throws SQLException {
         Connection messages = DataSource.getConnection();
 
-        String sql = "SELECT content FROM chat_history";
+        String sql = "SELECT sender_id, receiver, content FROM chat_history where sender_id = ? or receiver = ? or receiver = ' '";
         PreparedStatement statement = messages.prepareStatement(sql);
+        statement.setInt(1, clientId);
+        statement.setString(2, clientName);
         ResultSet rs = statement.executeQuery();
 
         while (rs.next()) {
             String message = rs.getString("content");
-            Platform.runLater(() -> controller.chatArea.appendText(message));
+            Platform.runLater(() -> controller.chatArea.appendText(message + "\n"));
         }
     }
 }

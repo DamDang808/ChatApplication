@@ -30,7 +30,7 @@ public class Client {
 
         // Create an output stream to send data to the server
         output = new DataOutputStream(socket.getOutputStream());
-        output.writeUTF(name);
+        output.writeUTF(name + " " + id);
 
         //create a thread in order to read message from server continuously
         TaskReadThread task = new TaskReadThread(socket, clientController);
@@ -40,11 +40,13 @@ public class Client {
 
     public void sendMessage(String message) {
         try {
+            String content = message.split("\n")[0];
             Connection connection = DataSource.getConnection();
-            String sql = "INSERT INTO chat_history (content, sender_id) VALUES (?, ?)";
+            String sql = "INSERT INTO chat_history (content, sender_id, receiver) VALUES (?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, message);
+            statement.setString(1, content);
             statement.setInt(2, id);
+            statement.setString(3, clientController.getRecipient());
             statement.executeUpdate();
 
             output.writeUTF(message);
