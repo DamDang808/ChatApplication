@@ -14,7 +14,6 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.nio.channels.AsynchronousChannel;
 
 public class ClientController {
 
@@ -70,7 +69,7 @@ public class ClientController {
             return;
         }
         if (inputField.getText().startsWith("/all")) {
-            recipient = "";
+            recipient = " ";
             inputField.setText("");
             return;
         }
@@ -89,7 +88,6 @@ public class ClientController {
     // Update the list of online users
     public void updateOnlineUsers(String message) {
         String content = message.substring(8);
-        System.out.println(content);
         if (content.equals("No online users")) {
             onlineUsers.getItems().clear();
             return;

@@ -75,7 +75,6 @@ public class Server extends Application {
                     for (TaskClientConnection clientConnection : this.connectionList) {
                         onlineUsers.append(clientConnection.nameOfClient).append(", ");
                     }
-                    System.out.println(onlineUsers);
                     broadcastOnlineUser(onlineUsers.toString());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -102,6 +101,7 @@ public class Server extends Application {
 
     }
 
+    // update online users list to all connected clients
     public void broadcastOnlineUser(String message) {
         for (TaskClientConnection clientConnection : connectionList) {
             clientConnection.sendMessage(message);
