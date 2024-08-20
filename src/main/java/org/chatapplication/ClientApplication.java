@@ -1,25 +1,31 @@
 package org.chatapplication;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.net.Socket;
 import java.sql.SQLException;
 
 public class ClientApplication extends Application {
     private Client client;
-    private int clientId;
     private String clientName;
+    private String token;
 
-    public ClientApplication(int id, String name) {
-        this.clientId = id;
+    private Socket socket;
+    private DataInputStream input;
+    private DataOutputStream output;
+
+    public ClientApplication(String name, String token, Socket socket, DataInputStream input, DataOutputStream output) {
         this.clientName = name;
+        this.token = token;
+        this.socket = socket;
+        this.input = input;
+        this.output = output;
     }
 
     @Override
@@ -29,31 +35,16 @@ public class ClientApplication extends Application {
 
         ClientController controller = fxmlLoader.getController();
 
-        client = new Client(clientId, clientName, controller);
+        client = new Client(clientName, token, controller, socket, input, output);
         client.start();
 
         controller.setClient(client);
         controller.setNameLabel(client.getName());
         controller.setStage(stage);
-        getAllPastMessages(controller);
+        Server.getAllPastMessages(controller, clientName);
 
         stage.setTitle("Chat Application");
         stage.setScene(scene);
         stage.show();
-    }
-
-    public void getAllPastMessages(ClientController controller) throws SQLException {
-        Connection messages = DataSource.getConnection();
-
-        String sql = "SELECT sender_id, receiver, content FROM chat_history where sender_id = ? or receiver = ? or receiver = ' '";
-        PreparedStatement statement = messages.prepareStatement(sql);
-        statement.setInt(1, clientId);
-        statement.setString(2, clientName);
-        ResultSet rs = statement.executeQuery();
-
-        while (rs.next()) {
-            String message = rs.getString("content");
-            Platform.runLater(() -> controller.chatArea.appendText(message + "\n"));
-        }
     }
 }

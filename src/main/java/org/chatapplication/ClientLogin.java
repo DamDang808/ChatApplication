@@ -9,10 +9,12 @@ import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.sql.SQLException;
 
 public class ClientLogin extends Application {
@@ -46,13 +48,13 @@ public class ClientLogin extends Application {
     }
 
     @FXML
-    public void setSignInButtonOnClicked() throws SQLException {
+    public void setSignInButtonOnClicked() throws IOException {
         // TODO:
         String username = usernameField.getText();
         String password = passwordField.getText();
 
         if(username.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Login Error!", "Please enter your email id", null);
+            showAlert(Alert.AlertType.ERROR, "Login Error!", "Please enter your username", null);
             return;
         }
         if(password.isEmpty()) {
@@ -60,28 +62,32 @@ public class ClientLogin extends Application {
             return;
         }
 
-        // Connect to database
-        Connection connection = DataSource.getConnection();
-        // Check username and password
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM user WHERE Username = ? AND Password = ?");
-        preparedStatement.setString(1, username);
-        preparedStatement.setString(2, password);
+        Socket socket = new Socket();
+        SocketAddress address = new InetSocketAddress(ConnectionUtil.host, ConnectionUtil.port);
+        socket.connect(address, 30000);
 
-        ResultSet resultSet = preparedStatement.executeQuery();
+        DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+        output.writeUTF(username + " " + password);
+
+        DataInputStream input = new DataInputStream(socket.getInputStream());
+        String response = input.readUTF();
+
         // If valid, open the chat application
-        if (resultSet.next()) {
+        if (response.equals("valid")) {
             usernameField.setText("");
             passwordField.setText("");
+            String token = input.readUTF();
+            output.writeUTF(username);
             Platform.runLater(() -> {
                 try {
-                    new ClientApplication(resultSet.getInt(1), username).start(new Stage());
+                    new ClientApplication(username, token, socket, input, output).start(new Stage());
                 } catch (IOException | SQLException e) {
                     throw new RuntimeException(e);
                 }
             });
         } else {
             // If invalid, show an error message
-            showAlert(Alert.AlertType.INFORMATION,"Failed", null, "Please enter correct Email and Password");
+            showAlert(Alert.AlertType.INFORMATION,"Failed", null, "Please enter correct username and Password");
         }
     }
 

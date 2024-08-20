@@ -12,8 +12,9 @@ public class TaskReadThread implements Runnable {
     DataInputStream input;
 
     //constructor
-    public TaskReadThread(Socket socket, ClientController client) {
+    public TaskReadThread(Socket socket, DataInputStream input, ClientController client) {
         this.socket = socket;
+        this.input = input;
         this.client = client;
     }
 
@@ -21,9 +22,6 @@ public class TaskReadThread implements Runnable {
     public void run() {
         while (true) {
             try {
-                // Create data input stream
-                input = new DataInputStream(socket.getInputStream());
-
                 // get data from the server
                 String message = input.readUTF();
                 if (message.startsWith("online"))

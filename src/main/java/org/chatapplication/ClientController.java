@@ -48,7 +48,6 @@ public class ClientController {
     private String recipient = " ";
 
 
-
     // Send message when the send button is clicked
     @FXML
     public void setInputFieldOnEnterPressed(KeyEvent keyEvent) throws IOException {
@@ -74,7 +73,8 @@ public class ClientController {
             return;
         }
 
-        message.append(nameLabel.getText()).append(": ").append(inputField.getText()).append("\n").append(client.getName()).append("\n").append(recipient);
+        message.append(nameLabel.getText())
+                .append(": ").append(inputField.getText()).append("\n").append(client.getName()).append("\n").append(recipient);
         client.sendMessage(message.toString());
         if (inputField.getText().equals("exit")) {
             stage.close();
